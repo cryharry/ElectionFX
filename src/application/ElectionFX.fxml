@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="757.0" prefWidth="990.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ElectionFXController">
+   <children>
+      <SplitPane dividerPositions="0.3786764705882353" prefHeight="570.0" prefWidth="818.0">
+        <items>
+          <AnchorPane>
+               <children>
+                  <Pane layoutY="38.0" prefHeight="719.0" prefWidth="306.0">
+                     <children>
+                        <ComboBox fx:id="classSel" layoutX="63.0" layoutY="21.0" prefHeight="23.0" prefWidth="54.0" />
+                        <Label layoutX="24.0" layoutY="25.0" text="학년" />
+                        <Label layoutX="141.0" layoutY="25.0" prefHeight="15.0" prefWidth="0.0" text="반" />
+                        <TextField fx:id="banTxt" layoutX="163.0" layoutY="21.0" prefHeight="23.0" prefWidth="65.0" />
+                        <TableView fx:id="studentTable" layoutY="64.0" prefHeight="692.0" prefWidth="306.0">
+                          <columns>
+                            <TableColumn fx:id="classCol" prefWidth="52.0" text="학년" />
+                            <TableColumn fx:id="banCol" prefWidth="68.0" text="반" />
+                              <TableColumn fx:id="numCol" prefWidth="82.0" text="번호" />
+                              <TableColumn fx:id="nameCol" prefWidth="99.0" text="이름" />
+                          </columns>
+                        </TableView>
+                        <Button fx:id="searchBtn" layoutX="252.0" layoutY="21.0" mnemonicParsing="false" onAction="#searchStudent" text="검색" />
+                     </children>
+                  </Pane>
+               </children>
+            </AnchorPane>
+          <AnchorPane prefHeight="757.0" prefWidth="630.0">
+               <children>
+                  <TabPane fx:id="elecTabPane" layoutX="-1.0" prefHeight="757.0" prefWidth="673.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab fx:id="tabA" text="회장선거">
+                           <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <GridPane fx:id="tabAGrid" alignment="CENTER" gridLinesVisible="true" layoutX="3.0" prefHeight="539.0" prefWidth="504.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                    </GridPane>
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                      </Tab>
+                      <Tab fx:id="tabB" text="부회장선거">
+                           <content>
+                              <AnchorPane>
+                                 <children>
+                                    <GridPane fx:id="tabBGrid" alignment="CENTER" gridLinesVisible="true" prefHeight="730.0" prefWidth="672.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                    </GridPane>
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+      <ToolBar prefHeight="33.0" prefWidth="82.0">
+        <items>
+          <Button fx:id="elecResult" layoutX="10.0" layoutY="14.0" mnemonicParsing="false" onAction="#changeFXML"  text="투표확인" />
+        </items>
+      </ToolBar>
+   </children>
+</AnchorPane>
