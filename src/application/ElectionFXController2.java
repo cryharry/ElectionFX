@@ -213,4 +213,9 @@ public class ElectionFXController2 implements Initializable {
 		stage.setScene(scene);
 		stage.show();
 	}
+
+	@FXML public void resetResult() throws SQLException, IOException {
+		sql = "DELETE FROM Election_List";
+		dbQue.deleteDB(sql);
+	}
 }

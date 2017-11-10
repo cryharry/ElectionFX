@@ -51,9 +51,10 @@
           </Tab>
         </tabs>
       </TabPane>
-      <ToolBar prefHeight="40.0" prefWidth="78.0">
+      <ToolBar prefHeight="40.0" prefWidth="170.0">
         <items>
           <Button fx:id="elecControl" mnemonicParsing="false" onAction="#changeFXML" text="투표등록" />
+            <Button mnemonicParsing="false" onAction="#resetResult" text="재투표" />
         </items>
       </ToolBar>
    </children>

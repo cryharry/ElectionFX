@@ -76,6 +76,7 @@ public class ElectionFXController implements Initializable {
 	int classInt, banInt;
 	ResultSet rs;
 	ObservableList<StudentBean> studentList = FXCollections.observableArrayList();
+	ObservableList<StudentBean> studentList2 = FXCollections.observableArrayList();
 	StudentBean stBean;
 	DBQue dbQue = new DBQue();
 	TableRow<StudentBean> row;
@@ -101,12 +102,12 @@ public class ElectionFXController implements Initializable {
 				stBean.setSt_name(new SimpleStringProperty(rs.getString("name")));
 				stBean.setE_sel(new SimpleStringProperty(rs.getString("e_sel")));
 				stBean.setSort(new SimpleIntegerProperty(rs.getInt("sort")));
-				studentList.add(stBean);
+				studentList2.add(stBean);
 			}
-			for(int z=0; z<studentList.size(); z++) {
-				String e_sel = studentList.get(z).getE_sel().getValue();
-				String st_id =studentList.get(z).getSt_id().getValue();
-				Integer sort = studentList.get(z).getSort().getValue()-1;
+			for(int z=0; z<studentList2.size(); z++) {
+				String e_sel = studentList2.get(z).getE_sel().getValue();
+				String st_id =studentList2.get(z).getSt_id().getValue();
+				Integer sort = studentList2.get(z).getSort().getValue()-1;
 				getFTPImage(st_id);
 				SearchSwitch(sort);
 				if(e_sel.equals("A")) {
@@ -176,8 +177,6 @@ public class ElectionFXController implements Initializable {
 					if(selectTab == tabA) {
 							SearchSwitch(x);
 							AddGridItem(tabAGrid,i,j,student, "A", check);
-							int index = studentTable.getSelectionModel().getSelectedIndex();
-							studentTable.getItems().remove(index);
 							st_image.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
 								tabAGrid.getChildren().remove(x);
 								try {
@@ -186,14 +185,11 @@ public class ElectionFXController implements Initializable {
 								} catch (SQLException e) {
 									e.printStackTrace();
 								}
-								studentTable.getItems().add(index, student);;
 								x--;
 							});
 						} else {
 							SearchSwitch(y);
 							AddGridItem(tabBGrid,i,j,student, "B", check);
-							int index = studentTable.getSelectionModel().getSelectedIndex();
-							studentTable.getItems().remove(index);
 							st_image.addEventFilter(MouseEvent.MOUSE_CLICKED, evt -> {
 								tabBGrid.getChildren().remove(y);
 								try {
@@ -202,7 +198,6 @@ public class ElectionFXController implements Initializable {
 								} catch (SQLException e) {
 									e.printStackTrace();
 								}
-								studentTable.getItems().add(index, student);;
 								y--;
 							});
 						}
@@ -324,6 +319,7 @@ public class ElectionFXController implements Initializable {
 	public void searchStudent() {
 		Boolean flag = true;
 		alert = new Alert(AlertType.INFORMATION);
+		studentTable.getItems().clear();
 		if(classSel.getSelectionModel().getSelectedIndex() != -1) {
 			classInt = classSel.getSelectionModel().getSelectedIndex()+1;
 			if(!banTxt.getText().equals("")) {
