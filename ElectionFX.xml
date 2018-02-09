@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>E:\eclipse_workspace\ElectionFX\src\ElectionFX.jar</jar>
-  <outfile>E:\eclipse_workspace\ElectionFX\src\ElectionFX.exe</outfile>
+  <jar>C:\Develop\선거등록\ElectionFX.jar</jar>
+  <outfile>C:\Develop\선거등록\ElectionFX.exe</outfile>
   <errTitle>자바런타임이 필요합니다.</errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>

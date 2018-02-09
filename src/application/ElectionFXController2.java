@@ -19,6 +19,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -27,6 +29,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -43,26 +46,54 @@ public class ElectionFXController2 implements Initializable {
 	@FXML
 	private Alert alert;
 	@FXML
-	private Label stLabel;
+	private Label stLabel, studentCount, elecCount, elecNoCount, elecPercent;
 	@FXML
 	private TabPane elecPane;
 	@FXML
-	private Tab elecControlTab, elecResultTab;
+	private Tab elecControlTab, elecResultTab, noElecTab;
 	@FXML
 	private GridPane elecControlGrid, elecResultGrid;
 	@FXML
 	private ImageView st_image;
+	@FXML
+	private CheckBox add3Check;
 	
-	ResultSet rs, rs2;
+	ResultSet rs, rs2, rs3;
 	ObservableList<StudentBean> studentList = FXCollections.observableArrayList();
 	StudentBean stBean;
 	DBQue dbQue = new DBQue();
 	int i = 0, j = 0;
 	String sql = "", sql2 = "";
 	ByteArrayOutputStream out;
+	int allSt = 0, elecSt = 0, noSt = 0, newAllSt = 0;
+	Double elecPer = 0.0;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		sql = "SELECT COUNT(st_id) as allst FROM student WHERE state = 'Y' and class in (1,2)";
+		try {
+			rs = dbQue.getRS(sql);
+			if(rs.next()) {
+				allSt = rs.getInt("allst");
+				studentCount.setText(String.valueOf(allSt));
+			}
+			sql = "SELECT COUNT(st_id) as elecSt FROM election_list where e_sel='A'";
+			rs = dbQue.getRS(sql);
+			if(rs.next()) {
+				elecSt = rs.getInt("elecSt");
+				elecCount.setText(String.valueOf(elecSt));
+			}
+			sql = "SELECT COUNT(st_id) as newAllSt FROM student WHERE state = 'Y'"; 
+			rs3 = dbQue.getRS(sql);
+			noSt = allSt - elecSt;
+			elecNoCount.setText(String.valueOf(noSt));
+			elecPer = ((double)elecSt / (double)allSt)*100.0;
+			double upPer = Math.round(elecPer*100d)/100d;
+			elecPercent.setText(upPer + "%");
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		dbQue.closeDB();		
 		sql = "SELECT st_id, class, ban, num, name, sort, e_sel FROM Election_Cand";
 		
 		try {

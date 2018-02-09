@@ -145,7 +145,7 @@ public class ElectionFXController implements Initializable {
 		studentTable.setRowFactory(tv -> {
 			row = new TableRow<StudentBean>();
 			row.setOnDragDetected(event -> {
-				if(!row.isEmpty()) {
+				//if(row.isEmpty()) {
 					stBean = studentTable.getSelectionModel().getSelectedItem();
 					Dragboard db = row.startDragAndDrop(TransferMode.COPY);
 					db.setDragView(row.snapshot(null, null));
@@ -154,14 +154,14 @@ public class ElectionFXController implements Initializable {
 					db.setContent(cc);
 					LocalDragboard.getInstance().putValue(StudentBean.class, stBean);
 					event.consume();
-				}
+				//}
 			});
 			return row;
 		});
 			elecTabPane.setOnDragOver(event -> {
 				Dragboard db = event.getDragboard();
 				if(db.hasString()) {
-					event.acceptTransferModes(TransferMode.ANY);
+					event.acceptTransferModes(TransferMode.COPY);
 					event.consume();
 				}
 			});
