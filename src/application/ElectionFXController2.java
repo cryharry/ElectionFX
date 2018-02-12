@@ -14,13 +14,13 @@ import javax.imageio.ImageIO;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -33,6 +33,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -57,81 +59,27 @@ public class ElectionFXController2 implements Initializable {
 	private ImageView st_image;
 	@FXML
 	private CheckBox add3Check;
+	@FXML
+	private TableView<StudentBean> noElecTable;
+	@FXML
+	private TableColumn<StudentBean, Integer> noElecClass, noElecBan, noElecNum;
+	@FXML
+	private TableColumn<StudentBean, String> noElecName;
 	
-	ResultSet rs, rs2, rs3;
+	ResultSet rs, rs2;
 	ObservableList<StudentBean> studentList = FXCollections.observableArrayList();
-	StudentBean stBean;
+	ObservableList<StudentBean> elecList = FXCollections.observableArrayList();
+	StudentBean stBean, elecBean;
 	DBQue dbQue = new DBQue();
 	int i = 0, j = 0;
 	String sql = "", sql2 = "";
 	ByteArrayOutputStream out;
 	int allSt = 0, elecSt = 0, noSt = 0, newAllSt = 0;
-	Double elecPer = 0.0;
+	Double elecPer, elecStPer = 0.0;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		sql = "SELECT COUNT(st_id) as allst FROM student WHERE state = 'Y' and class in (1,2)";
-		try {
-			rs = dbQue.getRS(sql);
-			if(rs.next()) {
-				allSt = rs.getInt("allst");
-				studentCount.setText(String.valueOf(allSt));
-			}
-			sql = "SELECT COUNT(st_id) as elecSt FROM election_list where e_sel='A'";
-			rs = dbQue.getRS(sql);
-			if(rs.next()) {
-				elecSt = rs.getInt("elecSt");
-				elecCount.setText(String.valueOf(elecSt));
-			}
-			sql = "SELECT COUNT(st_id) as newAllSt FROM student WHERE state = 'Y'"; 
-			rs3 = dbQue.getRS(sql);
-			noSt = allSt - elecSt;
-			elecNoCount.setText(String.valueOf(noSt));
-			elecPer = ((double)elecSt / (double)allSt)*100.0;
-			double upPer = Math.round(elecPer*100d)/100d;
-			elecPercent.setText(upPer + "%");
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-		dbQue.closeDB();		
-		sql = "SELECT st_id, class, ban, num, name, sort, e_sel FROM Election_Cand";
 		
-		try {
-			rs = dbQue.getRS(sql);
-			while(rs.next()) {
-				stBean = new StudentBean();
-				String st_id = rs.getString("st_id");
-				stBean.setSt_id(new SimpleStringProperty(st_id));
-				sql2 = "SELECT e_st_id, count(*) as count FROM Election_List WHERE e_st_id = '"+st_id+"' GROUP BY e_st_id";
-				rs2 = dbQue.getRS(sql2);
-				while(rs2.next()) {
-					stBean.setE_st_id(new SimpleStringProperty(rs2.getString("e_st_id")));
-					stBean.setCount(new SimpleIntegerProperty(rs2.getInt("count")));
-				}
-				stBean.setSt_class(new SimpleIntegerProperty(rs.getInt("class")));
-				stBean.setSt_ban(new SimpleIntegerProperty(rs.getInt("ban")));
-				stBean.setSt_num(new SimpleIntegerProperty(rs.getInt("num")));
-				stBean.setSt_name(new SimpleStringProperty(rs.getString("name")));
-				stBean.setE_sel(new SimpleStringProperty(rs.getString("e_sel")));
-				stBean.setSort(new SimpleIntegerProperty(rs.getInt("sort")));
-				studentList.add(stBean);
-			}
-			
-			for(int z=0; z<studentList.size(); z++) {
-				String e_sel = studentList.get(z).getE_sel().getValue();
-				String st_id =studentList.get(z).getSt_id().getValue();
-				Integer sort = studentList.get(z).getSort().getValue()-1;
-				getFTPImage(st_id);
-				SearchSwitch(sort);
-				if(e_sel.equals("A")) {
-					AddGridItem(elecControlGrid,i,j,studentList, z, "A");
-				} else {
-					AddGridItem(elecResultGrid,i,j,studentList, z, "B");
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	private void getFTPImage(String st_id) {
@@ -226,11 +174,14 @@ public class ElectionFXController2 implements Initializable {
 		if(studentList.get(z).getCount()!=null) {
 			count = studentList.get(z).getCount().getValue();
 		}
+		elecStPer = Double.valueOf(elecCount.getText());
 		vBox.setAlignment(Pos.CENTER);
 		vBox.getChildren().add(new Label("기호 ["+sort+"]번 "+st_class+"학년 "+st_ban+"반 "+st_num+"번 "+st_name));
 		if(st_id.equals(e_st_id)) {
-			vBox.getChildren().add(new Label("투표획득수: "+ count));
+			double myPer = Math.round((count / elecStPer)*100.d);
+			vBox.getChildren().add(new Label("투표획득수: "+ count + ", 득표율: " + myPer + "%"));
 		}
+		
 		tab.add(vBox, col, row);
 	}
 	
@@ -248,5 +199,105 @@ public class ElectionFXController2 implements Initializable {
 	@FXML public void resetResult() throws SQLException, IOException {
 		sql = "DELETE FROM Election_List";
 		dbQue.deleteDB(sql);
+	}
+	@FXML
+	private void searchResult() {
+		sql = "SELECT COUNT(st_id) as allst FROM student WHERE state = 'Y' and class in (1,2)";
+		try {
+			rs = dbQue.getRS(sql);
+			if(rs.next()) {
+				allSt = rs.getInt("allst");
+				studentCount.setText(String.valueOf(allSt));
+			}
+			sql = "SELECT COUNT(st_id) as elecSt FROM election_list where e_sel='A'";
+			rs = dbQue.getRS(sql);
+			if(rs.next()) {
+				elecSt = rs.getInt("elecSt");
+				elecCount.setText(String.valueOf(elecSt));
+			}
+			noSt = allSt - elecSt;
+			elecNoCount.setText(String.valueOf(noSt));
+			elecPer = ((double)elecSt / (double)allSt)*100.0;
+			double upPer = Math.round(elecPer*100d)/100d;
+			elecPercent.setText(upPer + "%");
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		dbQue.closeDB();		
+		sql = "SELECT st_id, class, ban, num, name, sort, e_sel FROM Election_Cand";
+		
+		try {
+			rs = dbQue.getRS(sql);
+			while(rs.next()) {
+				stBean = new StudentBean();
+				String st_id = rs.getString("st_id");
+				stBean.setSt_id(new SimpleStringProperty(st_id));
+				sql2 = "SELECT e_st_id, count(*) as count FROM Election_List WHERE e_st_id = '"+st_id+"' GROUP BY e_st_id";
+				rs2 = dbQue.getRS(sql2);
+				while(rs2.next()) {
+					stBean.setE_st_id(new SimpleStringProperty(rs2.getString("e_st_id")));
+					stBean.setCount(new SimpleIntegerProperty(rs2.getInt("count")));
+				}
+				stBean.setSt_class(new SimpleIntegerProperty(rs.getInt("class")));
+				stBean.setSt_ban(new SimpleIntegerProperty(rs.getInt("ban")));
+				stBean.setSt_num(new SimpleIntegerProperty(rs.getInt("num")));
+				stBean.setSt_name(new SimpleStringProperty(rs.getString("name")));
+				stBean.setE_sel(new SimpleStringProperty(rs.getString("e_sel")));
+				stBean.setSort(new SimpleIntegerProperty(rs.getInt("sort")));
+				studentList.add(stBean);
+			}
+			
+			for(int z=0; z<studentList.size(); z++) {
+				String e_sel = studentList.get(z).getE_sel().getValue();
+				String st_id =studentList.get(z).getSt_id().getValue();
+				Integer sort = studentList.get(z).getSort().getValue()-1;
+				getFTPImage(st_id);
+				SearchSwitch(sort);
+				if(e_sel.equals("A")) {
+					AddGridItem(elecControlGrid,i,j,studentList, z, "A");
+				} else {
+					AddGridItem(elecResultGrid,i,j,studentList, z, "B");
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		String selecTab = elecPane.getSelectionModel().getSelectedItem().getText();
+		
+		if(selecTab.equals("미투표자 확인")) {
+			sql = "SELECT st_id FROM election_list WHERE e_sel='A'";
+			sql2 = "SELECT class, ban, num, name FROM student WHERE class!=3 and state='Y' and st_id not in ('";
+			try {
+				rs = dbQue.getRS(sql);
+				int rsCount = 0;
+				while(rs.next()) {
+					if(rsCount!=0 && rsCount!=Math.round(elecStPer)-1) {
+						sql2 += rs.getString("st_id")+ "','";
+					}
+					if(rsCount==Math.round(elecStPer)-1) {
+						sql2 += rs.getString("st_id")+ "'";
+					}
+					rsCount++;
+				}
+				
+				sql2 += ") order by class, ban, num";
+				rs2 = dbQue.getRS(sql2);
+				while(rs2.next()) {
+					elecBean = new StudentBean();
+					elecBean.setSt_class(new SimpleIntegerProperty(rs2.getInt("class")));
+					elecBean.setSt_ban(new SimpleIntegerProperty(rs2.getInt("ban")));
+					elecBean.setSt_num(new SimpleIntegerProperty(rs2.getInt("num")));
+					elecBean.setSt_name(new SimpleStringProperty(rs2.getString("name")));
+					elecList.add(elecBean);
+				}
+				noElecClass.setCellValueFactory(elecList->elecList.getValue().getSt_class().asObject());
+				noElecBan.setCellValueFactory(elecList->elecList.getValue().getSt_ban().asObject());
+				noElecNum.setCellValueFactory(elecList->elecList.getValue().getSt_num().asObject());
+				noElecName.setCellValueFactory(elecList->elecList.getValue().getSt_name());
+				noElecTable.setItems(elecList);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

@@ -60,10 +60,12 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView layoutX="14.0" layoutY="14.0" prefHeight="513.0" prefWidth="720.0">
+                        <TableView fx:id="noElecTable" layoutX="14.0" layoutY="14.0" prefHeight="513.0" prefWidth="357.0">
                           <columns>
-                            <TableColumn prefWidth="75.0" text="C1" />
-                            <TableColumn prefWidth="75.0" text="C2" />
+                            <TableColumn fx:id="noElecClass" prefWidth="75.0" text="학년" />
+                            <TableColumn fx:id="noElecBan" prefWidth="75.0" text="반" />
+                              <TableColumn fx:id="noElecNum" prefWidth="75.0" text="번호" />
+                              <TableColumn fx:id="noElecName" prefWidth="131.0" text="이름" />
                           </columns>
                         </TableView>
                      </children>
@@ -81,10 +83,11 @@
       <Label layoutX="204.0" layoutY="13.0" text="재적인원" />
       <Label layoutX="341.0" layoutY="13.0" text="투표자수" />
       <Label layoutX="455.0" layoutY="13.0" prefHeight="15.0" prefWidth="64.0" text="미투표자수" />
-      <Label layoutX="598.0" layoutY="13.0" text="투표울" />
-      <Label fx:id="studentCount" layoutX="280.0" layoutY="13.0" text="Label" />
-      <Label fx:id="elecCount" layoutX="409.0" layoutY="13.0" text="Label" />
-      <Label fx:id="elecNoCount" layoutX="530.0" layoutY="13.0" text="Label" />
-      <Label fx:id="elecPercent" layoutX="652.0" layoutY="13.0" text="Label" />
+      <Label layoutX="598.0" layoutY="13.0" text="투표율" />
+      <Label fx:id="studentCount" layoutX="280.0" layoutY="13.0" />
+      <Label fx:id="elecCount" layoutX="409.0" layoutY="13.0" />
+      <Label fx:id="elecNoCount" layoutX="530.0" layoutY="13.0" />
+      <Label fx:id="elecPercent" layoutX="652.0" layoutY="13.0" />
+      <Button layoutX="708.0" layoutY="9.0" mnemonicParsing="false" onAction="#searchResult" prefHeight="23.0" prefWidth="64.0" text="검색" />
    </children>
 </AnchorPane>

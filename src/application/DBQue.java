@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omg.PortableServer.REQUEST_PROCESSING_POLICY_ID;
+
 public class DBQue {
 	Connection con = null;
 	PreparedStatement pstmt;
@@ -64,5 +66,11 @@ public class DBQue {
 		if(rs!=null) {try {rs.close();}catch(SQLException e){}}
 		if(pstmt!=null) {try {pstmt.close();}catch(SQLException e){}}
 		if(con!=null) {try {con.close();}catch(SQLException e){}}
+	}
+	
+	public ResultSet getCount(String sql) throws SQLException {
+		con = dbConn();
+		pstmt = con.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+		return rs;
 	}
 }
